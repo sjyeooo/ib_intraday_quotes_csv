@@ -73,16 +73,11 @@ def transform_intraday_ib(df, fullname_value: str, ticker_value: str):
     df["full_name"] = full_name
     df["ticker"] = ticker
 
-    # split existing date column into 2 columns Date_YMD, TIME
-    df['date'] = df['date'].astype(str)  # convert to string first to use .str()
-    df[['Date_YMD', 'TIME']] = df['date'].str.split(' ', n=1, expand=True)
-    # drop unwanted columns.
-    df = df.drop(["date", "barCount", "average"], axis='columns')
+    df = df.drop(["barCount", "average"], axis='columns')
+    # Compute average price based on mean of high low
+    df['average_price'] = df[['high', 'low']].mean(axis=1)
     # shift column order
-    df = df[['full_name', 'ticker', 'Date_YMD', 'TIME', 'open', 'high', 'low', 'close', 'volume']]
-    # transform Date_YMD from 2017-04-18 to 20170418
-    df['Date_YMD'] = df['Date_YMD'].str.replace("-", "")
-    # clean 'volume' column. Many -ve values which are nonsense. Make to minimum 0
+    df = df[['full_name', 'ticker', 'date', 'open', 'high', 'low', 'close', 'average_price', 'volume']]
     df['volume'] = df['volume'].apply(clean_volume_column)
     return df
 
