@@ -260,7 +260,7 @@ def download_recent_intraday_data(folderpath, number_of_days: int, download_list
 
 
 def download_historical_intraday_data(folderpath: str, download_list: List[str], contract_type: str) -> None:
-    bar_size = "1 hour"
+    bar_size = "1 day"
     # can't show 'TRADES' for CFD. See https://interactivebrokers.github.io/tws-api/historical_bars.html
     # can't show 'TRADES' for FOREX AND CFD. See https://interactivebrokers.github.io/tws-api/historical_bars.html
     if contract_type == "forex":
@@ -276,7 +276,7 @@ def download_historical_intraday_data(folderpath: str, download_list: List[str],
         what_to_show = "MIDPOINT"
     else:
         assert False
-    duration = "360 D"
+    duration = "20 Y"
 
     if contract_type == "forex":
         for index in range(0, len(download_list)):
