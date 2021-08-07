@@ -138,7 +138,7 @@ def get_symbol_list(symbol: str, bar_size: str, what_to_show: str, duration: str
 
 
 # download intraday data from Interactive Brokers
-# contract_type can be "forex" or "cfd"
+# contract_type can be "forex" or "cfd", "stocks"
 def download_intraday_data_to_csv(symbol_list: List[Dict], contract_type: str,
                                   csv_folderpath: str, print_start_date="no") -> None:
     import traceback
@@ -187,6 +187,11 @@ def download_intraday_data_to_csv(symbol_list: List[Dict], contract_type: str,
                                 exchange=symbol_list[index]["Exchange"],
                                 currency=symbol_list[index]["Currency"],
                                 includeExpired=True)
+        elif contract_type == "stocks":
+            contract = Contract(symbol=symbol_list[index]["Symbol"],
+                                secType='STK',
+                                exchange=symbol_list[index]["Exchange"],
+                                currency=symbol_list[index]["Currency"])
         else:
             raise Exception(F"invalid contract parameter {{contract}}")
         # documentation on reqHistoricalData()
@@ -213,14 +218,14 @@ def download_intraday_data_to_csv(symbol_list: List[Dict], contract_type: str,
 
 
 # download recent forex data in hourly bars
-# contract_type : "forex", "cfd", "index"
+# contract_type : "forex", "cfd", "index", "stocks"
 def download_recent_intraday_data(folderpath, number_of_days: int, download_list, contract_type) -> None:
     assert type(number_of_days) == int and (0 <= number_of_days <= 360)
 
     bar_size = "1 hour"
 
     # can't show 'TRADES' for FOREX AND CFD. See https://interactivebrokers.github.io/tws-api/historical_bars.html
-    if contract_type == "forex" or contract_type == 'cfd':
+    if contract_type == "forex" or contract_type == 'cfd' or contract_type == "stocks":
         what_to_show = "MIDPOINT"
     elif contract_type == "index":
         what_to_show = "TRADES"
@@ -241,7 +246,7 @@ def download_recent_intraday_data(folderpath, number_of_days: int, download_list
 
             download_intraday_data_to_csv(symbol_list=symbol_list, contract_type=contract_type,
                                           csv_folderpath=folderpath)
-    elif contract_type == "cfd" or contract_type == "index" or contract_type == "cont_futures":
+    elif contract_type == "cfd" or contract_type == "index" or contract_type == "cont_futures" or "stocks":
         for index in range(0, len(download_list)):
             symbol_list = get_symbol_list(symbol=download_list[index]["Symbol"], bar_size=bar_size,
                                           what_to_show=what_to_show,
@@ -272,6 +277,8 @@ def download_historical_intraday_data(folderpath: str, download_list: List[str],
     # https://groups.io/g/insync/topic/adding_contfut_to_ib_insync/5850800?p=,,,20,0,0,0::recentpostdate%2Fsticky,,,20,2,0,5850800
     elif contract_type == "cont_futures":  # continuous futures
         what_to_show = "TRADES"
+    elif contract_type == "stocks":
+        what_to_show = "MIDPOINT"
     else:
         assert False
     duration = "360 D"
@@ -294,6 +301,17 @@ def download_historical_intraday_data(folderpath: str, download_list: List[str],
                                                   exchange=download_list[index]["Exchange"],
                                                   currency=download_list[index]["Currency"]
                                                   )
+            download_intraday_data_to_csv(symbol_list=symbol_list, contract_type=contract_type,
+                                          csv_folderpath=folderpath)
+    elif contract_type == "stocks":
+        for index in range(0, len(download_list)):
+            symbol_list = get_symbol_list(symbol=download_list[index]["Symbol"], bar_size=bar_size,
+                                          what_to_show=what_to_show,
+                                          duration=duration,
+                                          fullname=download_list[index]["FullName"],
+                                          exchange=download_list[index]["Exchange"],
+                                          currency=download_list[index]["Currency"]
+                                          )
             download_intraday_data_to_csv(symbol_list=symbol_list, contract_type=contract_type,
                                           csv_folderpath=folderpath)
 
@@ -351,12 +369,29 @@ cfd_list: List[Dict] = [
     {"Symbol": 'IBJP225', "FullName": "Nikkei225_CFD", "Exchange": "SMART", "Currency": "JPY"},
 ]
 
+stocks_list: List[Dict] = [
+    #Individual Stocks
+    # {"Symbol": 'MRNA', "FullName": "Moderna", "Exchange": "ISLAND", "Currency": "USD"},
+    # {"Symbol": 'AMD', "FullName": "AMD", "Exchange": "SMART", "Currency": "USD"},
+    # {"Symbol": 'XLNX', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
+    # Passive Portfolio - LSE
+    {"Symbol": 'CSPX', "FullName": "iShares Core S&P 500 UCITS ETF", "Exchange": "SMART", "Currency": "USD"},
+    {"Symbol": 'IWDA', "FullName": "iShares Core MSCI World UCITS ETF", "Exchange": "SMART", "Currency": "USD"},
+    {"Symbol": 'AGGU', "FullName": "iShares Core Global Aggregate Bond UCITS ETF", "Exchange": "SMART", "Currency": "USD"},
+    # Passive Portfolio - US
+    # {"Symbol": 'SPY', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
+    # {"Symbol": 'QQQ', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
+    # {"Symbol": 'VOO', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
+    # {"Symbol": 'VT', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
+    # {"Symbol": 'VTI', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
+]
+
 indices_list: List[Dict] = [
-    # {"Symbol": 'STI', "FullName": "StraitsTimesIndex_Ind", "Exchange": "SGX", "Currency": "SGD"},  # no market permission
+    {"Symbol": 'STI', "FullName": "StraitsTimesIndex_Ind", "Exchange": "SGX", "Currency": "SGD"},  # no market permission
     {"Symbol": 'SPX', "FullName": "S&P500_Ind", "Exchange": "CBOE", "Currency": "USD"},
     {"Symbol": 'INDU', "FullName": "DowJonesIndustrialAverage_Ind", "Exchange": "CME", "Currency": "USD"},
-    # {"Symbol": 'NDX', "FullName": "Nasdaq100_Ind", "Exchange": "NASDAQ", "Currency": "USD"},
-    # {"Symbol": 'NK', "FullName": "Nikkei225_Ind", "Exchange": "CME", "Currency": "USD"},  # don't like mismatched currency
+    {"Symbol": 'NDX', "FullName": "Nasdaq100_Ind", "Exchange": "NASDAQ", "Currency": "USD"},
+    {"Symbol": 'NK', "FullName": "Nikkei225_Ind", "Exchange": "CME", "Currency": "USD"},  # don't like mismatched currency
 ]
 
 futures_list: List[Dict] = [
@@ -377,7 +412,7 @@ futures_list: List[Dict] = [
     {"Symbol": 'GC', "FullName": "Gold_FUT", "Exchange": "NYMEX", "Currency": "USD"},
     {"Symbol": 'ZT', "FullName": "2_year_treasury_note_FUT", "Exchange": "ECBOT", "Currency": "USD"},
     {"Symbol": 'ZQ', "FullName": "30_day_fed_funds_FUT", "Exchange": "ECBOT", "Currency": "USD"},
-    # {"Symbol": 'SI', "FullName": "Silver_FUT", "Exchange": "NYMEX", "Currency": "USD"},
+    {"Symbol": 'SI', "FullName": "Silver_FUT", "Exchange": "NYMEX", "Currency": "USD"},
     {"Symbol": 'ZC', "FullName": "Corn_FUT", "Exchange": "ECBOT", "Currency": "USD"},
     {"Symbol": 'ZW', "FullName": "Wheat_FUT", "Exchange": "ECBOT", "Currency": "USD"},
     {"Symbol": 'ZS', "FullName": "Soybean_FUT", "Exchange": "ECBOT", "Currency": "USD"},
