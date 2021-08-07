@@ -280,7 +280,7 @@ def download_historical_intraday_data(folderpath: str, download_list: List[str],
 
     if contract_type == "forex":
         for index in range(0, len(download_list)):
-            symbol_list = get_symbol_history_list(symbol=download_list[index], bar_size=bar_size,
+            symbol_list = get_symbol_list(symbol=download_list[index], bar_size=bar_size,
                                                   what_to_show=what_to_show,
                                                   duration=duration,
                                                   fullname=download_list[index]
@@ -289,7 +289,7 @@ def download_historical_intraday_data(folderpath: str, download_list: List[str],
                                           csv_folderpath=folderpath)
     elif contract_type == "cfd" or contract_type == "index" or contract_type == "cont_futures":
         for index in range(0, len(download_list)):
-            symbol_list = get_symbol_history_list(symbol=download_list[index]["Symbol"], bar_size=bar_size,
+            symbol_list = get_symbol_list(symbol=download_list[index]["Symbol"], bar_size=bar_size,
                                                   what_to_show=what_to_show,
                                                   duration=duration,
                                                   fullname=download_list[index]["FullName"],
@@ -382,7 +382,7 @@ stocks_list: List[Dict] = [
 ]
 
 indices_list: List[Dict] = [
-    {"Symbol": 'STI', "FullName": "StraitsTimesIndex_Ind", "Exchange": "SGX", "Currency": "SGD"},  # no market permission
+    {"Symbol": 'STI', "FullName": "StraitsTimesIndex_Ind", "Exchange": "SGX", "Currency": "SGD"},
     {"Symbol": 'SPX', "FullName": "S&P500_Ind", "Exchange": "CBOE", "Currency": "USD"},
     {"Symbol": 'INDU', "FullName": "DowJonesIndustrialAverage_Ind", "Exchange": "CME", "Currency": "USD"},
     {"Symbol": 'NDX', "FullName": "Nasdaq100_Ind", "Exchange": "NASDAQ", "Currency": "USD"},
@@ -516,14 +516,14 @@ def main() -> None:
 
     # Uncomment to download recent intraday data
     data_folderpath = "./data/recent/"
-    historical_data_folderpath = "./data/"
+    historical_data_folderpath = "./data/historical/"
     # for some reason, if use <25 days download, some SGX futures symbol will fail to download.
     # Need to lengthen to 30 days.
     # For some futures like MXTH, MXMY, need to lengthen to 70
     # days_to_download = 30
     # days_to_download = 70
     days_to_download = 5
-    days_to_download = 70
+    days_to_download = 360
     # days_to_download = 5
 
     # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
