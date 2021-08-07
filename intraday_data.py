@@ -509,9 +509,9 @@ def main() -> None:
     logger_configuration()
 
     ib_live_trading_api_port_number = 7496  # live trading account
-    ib_paper_trading_api_port_number = 7498  # paper trading account
-    # ib_api_port_number = ib_paper_trading_api_port_number
-    ib_api_port_number = ib_live_trading_api_port_number
+    ib_paper_trading_api_port_number = 7497  # paper trading account
+    ib_api_port_number = ib_paper_trading_api_port_number
+    # ib_api_port_number = ib_live_trading_api_port_number
     if ib_api_port_number == ib_live_trading_api_port_number:
         ib.connect('127.0.0.1', ib_api_port_number, clientId=1, readonly=True)
     elif ib_api_port_number == ib_paper_trading_api_port_number:
@@ -528,19 +528,22 @@ def main() -> None:
     # days_to_download = 30
     # days_to_download = 70
     days_to_download = 5
-
-    download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
-                                  download_list=cfd_list, contract_type="cfd")
-    download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
-                                  download_list=forex_symbol_list, contract_type="forex")
-    download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
-                                  download_list=futures_list, contract_type="cont_futures")
+    days_to_download = 70
+    # days_to_download = 5
 
     # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
+    #                               download_list=cfd_list, contract_type="cfd")
+    # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
+    #                               download_list=forex_symbol_list, contract_type="forex")
+    # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
+    #                               download_list=futures_list, contract_type="cont_futures")
+    # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
     #                               download_list=indices_list, contract_type="index")
+    # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
+    #                               download_list=stocks_list, contract_type="stocks")
 
     # Uncomment to download historical intraday data. Go back to multi-year data
-    # data_folderpath = "./data/historical/"
+    data_folderpath = "./data/historical/"
     # download_historical_intraday_data(contract_type="forex", folderpath=historical_data_folderpath,
     #                                   download_list=forex_symbol_list)
     # download_historical_intraday_data(contract_type="cfd", folderpath=historical_data_folderpath,
@@ -549,6 +552,8 @@ def main() -> None:
     #                                   download_list=indices_list)
     # download_historical_intraday_data(contract_type="cont_futures", folderpath=historical_data_folderpath,
     #                                   download_list=futures_list)
+    download_historical_intraday_data(contract_type="stocks", folderpath=historical_data_folderpath,
+                                      download_list=stocks_list)
     return None
 
 
