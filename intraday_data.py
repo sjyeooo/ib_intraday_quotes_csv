@@ -372,7 +372,11 @@ stocks_list: List[Dict] = [
     # Passive Portfolio - LSE
     {"Symbol": 'CSPX', "FullName": "iShares Core S&P 500 UCITS ETF", "Exchange": "SMART", "Currency": "USD"},
     {"Symbol": 'IWDA', "FullName": "iShares Core MSCI World UCITS ETF", "Exchange": "SMART", "Currency": "USD"},
+    {"Symbol": 'IDTL', "FullName": "iShares $ Treasury Bond 20+yr UCITS ETF Dist", "Exchange": "SMART", "Currency": "USD"},
+    {"Symbol": 'DTLA', "FullName": "iShares $ Treasury Bond 20+yr UCITS ETF Acc", "Exchange": "SMART", "Currency": "USD"},
     {"Symbol": 'AGGU', "FullName": "iShares Core Global Aggregate Bond UCITS ETF", "Exchange": "SMART", "Currency": "USD"},
+    {"Symbol": 'VUSD', "FullName": "Vanguard S&P 500 UCITS ETF ", "Exchange": "SMART", "Currency": "USD"},
+    {"Symbol": 'VWRA', "FullName": "Vanguard FTSE All-World UCITS ETF USD Acc", "Exchange": "SMART", "Currency": "USD"},
     # Passive Portfolio - US
     # {"Symbol": 'SPY', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
     # {"Symbol": 'QQQ', "FullName": "Xilinx", "Exchange": "SMART", "Currency": "USD"},
@@ -526,23 +530,22 @@ def main() -> None:
     days_to_download = 360
     # days_to_download = 5
 
-    # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
-    #                               download_list=cfd_list, contract_type="cfd")
-    # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
-    #                               download_list=forex_symbol_list, contract_type="forex")
+    download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
+                                  download_list=cfd_list, contract_type="cfd")
+    download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
+                                  download_list=forex_symbol_list, contract_type="forex")
     # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
     #                               download_list=futures_list, contract_type="cont_futures")
     # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
     #                               download_list=indices_list, contract_type="index")
-    # download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
-    #                               download_list=stocks_list, contract_type="stocks")
+    download_recent_intraday_data(folderpath=data_folderpath, number_of_days=days_to_download,
+                                  download_list=stocks_list, contract_type="stocks")
 
     # Uncomment to download historical intraday data. Go back to multi-year data
-    data_folderpath = "./data/historical/"
-    # download_historical_intraday_data(contract_type="forex", folderpath=historical_data_folderpath,
-    #                                   download_list=forex_symbol_list)
-    # download_historical_intraday_data(contract_type="cfd", folderpath=historical_data_folderpath,
-    #                                   download_list=cfd_list)
+    download_historical_intraday_data(contract_type="forex", folderpath=historical_data_folderpath,
+                                      download_list=forex_symbol_list)
+    download_historical_intraday_data(contract_type="cfd", folderpath=historical_data_folderpath,
+                                      download_list=cfd_list)
     # download_historical_intraday_data(contract_type="index", folderpath=historical_data_folderpath,
     #                                   download_list=indices_list)
     # download_historical_intraday_data(contract_type="cont_futures", folderpath=historical_data_folderpath,
